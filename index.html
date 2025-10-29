@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bhakti Jap — Radha Radha (Mantra + Theme)</title>
+<style>
+:root{
+  --kesariya: #ff8a00;
+  --bg: #0b0810;
+  --card: #120712;
+  --gold: #ffd966;
+  --muted: #c7b79a;
+  font-family:"Noto Sans", "Poppins", system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:
+  radial-gradient(700px 200px at 10% 10%, #2b0f26, transparent),
+  linear-gradient(180deg,var(--bg),#060511); color:#fff;}
+.wrap{display:flex;min-height:100vh;transition:all .25s ease;}
+/* SLIDING SIDEBAR - closed state controlled by class */
+.sidebar{
+  width:320px;padding:18px;background:linear-gradient(180deg,#3a0f12,#2a070d);
+  border-right:1px solid rgba(255,209,102,0.06);overflow:auto;height:100vh;
+  transform:translateX(0);transition:transform .28s ease;
+  position:relative; z-index:40;
+}
+.wrap.sidebar-closed .sidebar{ transform:translateX(-360px); }
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg,var(--kesariya),#ffb86b);display:grid;place-items:center;color:#31110a;font-weight:900;font-size:20px}
+.title{font-size:18px;color:var(--gold);font-weight:800}
+.subtitle{font-size:12px;color:var(--muted)}
+.list{margin-top:12px;display:flex;flex-direction:column;gap:10px;padding-bottom:30px}
+.item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;cursor:pointer;
+  background:linear-gradient(180deg,rgba(255,209,102,0.02),transparent);border:1px solid rgba(255,209,102,0.03);}
+.item:hover{transform:translateX(6px);transition:transform .12s ease;}
+.item.active{background:linear-gradient(180deg, rgba(255,209,102,0.06), rgba(255,209,102,0.01));border:1px solid rgba(255,209,102,0.12)}
+.avatar{width:56px;height:56px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:14px;background:radial-gradient(circle at 30% 30%, rgba(255,209,102,0.12), transparent); color:#120712}
+.meta .name{font-weight:800; font-size:14px}
+.meta .mantra{font-size:12px;color:var(--muted);margin-top:4px; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+/* main */
+.main{flex:1;padding:26px;display:flex;flex-direction:column;gap:18px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.h-title{font-size:26px;color:var(--gold);font-weight:900}
+.h-sub{color:var(--muted); font-size:13px; max-width:720px}
+.stage{display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start}
+.card{background:linear-gradient(180deg,#1b0f12,#12070a);padding:22px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);min-height:420px;position:relative;overflow:hidden}
+.devimg{width:200px;height:200px;border-radius:16px;display:grid;place-items:center;font-size:56px;font-weight:900;background:radial-gradient(circle at 30% 30%, rgba(255,209,102,0.12), rgba(255,209,102,0.02)); color:var(--kesariya)}
+.bigname{font-size:48px;font-weight:900;margin-top:14px;color:var(--kesariya);text-shadow:0 0 18px rgba(255,209,102,0.06);cursor:pointer}
+.count{font-size:44px;font-weight:900;margin-top:10px}
+.controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+
+/* BIG ROUND JAP button (center) */
+.jap{
+  width:160px;height:160px;border-radius:50%;display:grid;place-items:center;
+  margin-top:18px;background:radial-gradient(circle at 30% 20%, #ffd166, #ff9b00);
+  color:#120b12;border:0;font-weight:900;cursor:pointer;font-size:22px;
+  box-shadow:0 20px 50px rgba(255,155,0,0.18), inset 0 -6px 18px rgba(0,0,0,0.06);
+  transition:transform .12s ease;
+}
+.jap:active{ transform:scale(.98);}
+.japSmall{padding:8px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
+
+/* mantra panel */
+.mantra-panel{padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:10px;margin-top:12px;color:var(--muted)}
+.mantra-title{font-weight:800;color:var(--gold)}
+
+/* fly text */
+.fly{position:absolute;pointer-events:none;font-weight:900;color:var(--kesariya);text-shadow:0 0 12px rgba(255,209,102,0.12);
+  animation:flyUp 1.0s forwards; transform-origin:center;}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-220px) scale(1.4) rotate(-6deg);}}
+
+/* small */
+.bottom{margin-top:8px;color:var(--muted);font-size:13px}
+
+/* drawer toggle */
+.drawerToggle{
+  position:fixed; left:12px; top:12px; z-index:60; width:44px; height:44px; border-radius:10px;
+  background:linear-gradient(180deg,var(--kesariya),#ffb86b); display:grid; place-items:center; color:#120712; cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* responsive */
+@media (max-width:980px){
+  .stage{grid-template-columns:1fr}
+  .sidebar{position:fixed; left:0; top:0; bottom:0; z-index:50}
+  .wrap.sidebar-closed .drawerToggle{ left:12px; } 
+}
+</style>
+</head>
+<body>
+<div class="drawerToggle" id="drawerToggle" title="Open / Close Sidebar">☸</div>
+
+<div class="wrap sidebar-open" id="wrap">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">ॐ</div>
+      <div>
+        <div class="title">Bhakti Jap</div>
+        <div class="subtitle">Radha Radha • Naam Jap</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Choose a mantra — click an item to chant once. Use the big JAP button to perform jap. Radha 28 names available as a separate play.</div>
+
+    <div style="font-weight:800;margin-top:6px;color:var(--gold)">Radha — 28 Naam</div>
+    <div style="margin:8px 0 12px 0">
+      <button class="japSmall" onclick="playRadhaList()">Play Radha 28</button>
+    </div>
+
+    <div style="font-weight:800;margin-top:6px;color:var(--gold)">Mantras</div>
+    <div class="list" id="list"></div>
+
+    <div style="margin-top:16px">
+      <div style="font-weight:800;margin-bottom:6px">Audio Options</div>
+      <label style="display:block;margin-bottom:6px"><input type="checkbox" id="musicOn" checked> Per-deity soft ambient (ON)</label>
+      <label style="display:block;margin-bottom:6px"><input type="checkbox" id="autoLoop"> Auto-loop mantra (optional)</label>
+      <div style="margin-top:10px;color:var(--muted);font-size:13px">Auto-loop off → clicking plays mantra once. Clicking a different name stops current mantra immediately.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <div>
+        <div class="h-title">नाम जाप — Bhakti Counter</div>
+        <div class="h-sub">Radha Radha is first. Click list items for individual mantras, or use the big JAP button for focused chanting. Counters persist in your browser.</div>
+      </div>
+      <div>
+        <button class="japSmall" id="stopAll">Stop All</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <section class="card" id="stageLeft">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="devimg" id="devImg">र</div>
+          <div class="bigname" id="bigName" title="Click to Jap">राधे राधे</div>
+          <div class="count" id="count">0</div>
+
+          <!-- Big round JAP button center -->
+          <button class="jap" id="japBtn">JAP</button>
+
+          <div class="controls" style="justify-content:center">
+            <button class="japSmall" id="plus10">+10</button>
+            <button class="japSmall" id="plus108">+108</button>
+            <button class="japSmall" id="resetItem">Reset This</button>
+          </div>
+
+          <div class="mantra-panel" id="mantraPanel" style="width:100%;max-width:680px">
+            <div class="mantra-title" id="mantraTitle">राधे राधे</div>
+            <div id="mantraText" style="margin-top:8px;color:var(--muted)">राधे राधे</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div style="font-weight:800">Quick Controls</div>
+        <div style="margin-top:12px" class="mantra-panel">
+          <div style="font-weight:700;margin-bottom:6px">Add / Remove</div>
+          <input id="addName" placeholder="नया नाम जोड़ें (mantra के साथ '|' दें)" style="width:100%;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:var(--muted)" />
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="japSmall" id="addBtn">Add</button>
+            <button class="japSmall" id="removeBtn">Remove Selected</button>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Add format example: <em>Shri Sai|ॐ साईं नमः</em></div>
+        </div>
+
+        <div style="margin-top:12px" class="mantra-panel">
+          <div style="font-weight:700;margin-bottom:6px">Tips</div>
+          <div style="color:var(--muted);font-size:13px">Use SPACE to jap. Toggle Auto-loop if you want continuous chanting (not recommended by default).</div>
+        </div>
+
+      </aside>
+    </div>
+
+    <div class="bottom">Tip: Mantra voice quality depends on browser/device TTS voices (Chrome/Edge on desktop usually gives best hi-IN voices).</div>
+  </main>
+</div>
+
+<script>
+/* =========================
+   SPECIAL MANTRA & provided list conversion
+   =========================*/
+const SPECIAL_MANTRA = "ॐ कृष्णाय वासुदेवाय हरये परमात्मने ॥ प्रणतः क्लेशनाशाय गोविंदाय नमो नमः ॥";
+
+/* User-provided mantras: key==display==mantra as requested */
+const EXTRA_MANTRAS = [
+  "ॐ नमः शिवाय","ॐ नमो भगवते वासुदेवाय","हरे कृष्ण हरे कृष्ण, कृष्ण कृष्ण हरे हरे","ॐ श्री राम जय राम जय जय राम",
+  "ॐ गं गणपतये नमः","ॐ ऐं ह्रीं क्लीं","ॐ दुं दुर्गायै नमः","ॐ महालक्ष्म्यै नमः","ॐ ऐं सरस्वत्यै नमः",
+  "ॐ नमः भगवते राघवाय","ॐ दत्तात्रेय नमः","ॐ साईं राम","ॐ नमो नारायणाय","ॐ नमो भगवते शिवाय",
+  "ॐ शान्ति शान्ति शान्ति","ॐ भूर्भुवः स्वः","ॐ सोऽहम्","ॐ ह्रीं श्रीं क्लीं","ॐ गं हनुमते नमः",
+  "ॐ श्री राधे राधे","ॐ श्रीकृष्णाय नमः","ॐ नारायणाय नमः","ॐ नमो भगवते दत्तात्रेयाय","ॐ नमो ब्रह्मणे नमः",
+  "ॐ नमो भवरुपाय","ॐ रूद्राय नमः","ॐ नमः परमहंस","ॐ फट्","ॐ नमो भगवते वासुदेवाय (दोहा)",
+  "ॐ नमो भगवते राम","ॐ नमो भगवते हनुमते","ॐ नमः शिवाय (पंचाक्षरी)","ॐ ऐं क्लीं चामुण्डायै विच्चे",
+  "ॐ श्री हनुमते नमः","ॐ श्री शिवाय नमः","ॐ श्रीराम जय राम","ॐ कृपा करुणा","ॐ नमो विष्णवे","ॐ नमः शिवाय नमः",
+  // additional as requested
+  "ॐ श्रीकृष्णाय वन्दे","ॐ राधे राधे श्री राधे","ॐ हरिः ॐ"
+];
+
+/* Build DEFAULT list preserving original first 11 entries but now we will insert EXTRA_MANTRAS after them.
+   Also earlier DEFAULT existed; we'll reconstruct exactly keeping earlier ones and then append extras.
+*/
+const INITIAL_DEFAULT = [
+  {key:'Radha Radha', display:'राधा राधे', mantra:'राधे राधे', avatar:'र'},
+  {key:'Lord Krishna', display:'श्री कृष्ण', mantra:'हरे कृष्ण हरे कृष्ण, कृष्ण कृष्ण हरे हरे', avatar:'क'},
+  {key:'Lord Rama', display:'श्री राम', mantra:'ॐ श्री रामाय नमः', avatar:'रा'},
+  {key:'Lord Shiva', display:'महादेव', mantra:'ॐ नमः शिवाय', avatar:'श'},
+  {key:'Lord Hanuman', display:'हनुमान जी', mantra:'ॐ हनुमते नमः', avatar:'ह'},
+  {key:'Maa Durga', display:'माँ दुर्गा', mantra:'ॐ दुं दुर्गायै नमः', avatar:'दु'},
+  {key:'Maa Lakshmi', display:'माँ लक्ष्मी', mantra:'ॐ महालक्ष्म्यै नमः', avatar:'ल'},
+  {key:'Lord Vishnu', display:'श्री विष्णु', mantra:'ॐ नमो भगवते वासुदेवाय', avatar:'वि'},
+  {key:'Lord Ganesha', display:'गणपति', mantra:'ॐ गं गणपतये नमः', avatar:'ग'},
+  {key:'Maa Saraswati', display:'सरस्वती माता', mantra:'ॐ ऐं सरस्वत्यै नमः', avatar:'स'},
+  {key:'Brahma', display:'ब्रह्मा', mantra:'ॐ', avatar:'ब'}
+];
+
+/* Convert EXTRA_MANTRAS into objects with avatar = first 1-2 visible characters */
+function mkAvatar(text){
+  // pick first 1-2 Hiragana/Devanagari characters for avatar display (approx)
+  if(!text) return '';
+  // take up to first two visible tokens before whitespace
+  const t = text.trim();
+  // pick first two unicode codepoints
+  const chars = Array.from(t);
+  return (chars.slice(0,2).join('')).slice(0,2);
+}
+
+/* Build FULL DEFAULT by preserving initial then appending extras and inserting SPECIAL_MANTRA 4 times as requested */
+const DEFAULT = (()=>{
+  const arr = INITIAL_DEFAULT.map(d=> ({...d})); // clone
+  // append extras as objects
+  for(const m of EXTRA_MANTRAS){
+    arr.push({ key: m, display: m, mantra: m, avatar: mkAvatar(m) || m.charAt(0) });
+  }
+  // insert SPECIAL_MANTRA at 4 positions: after index 3, 10, 20, end (approx) — aligned to earlier requests
+  // We'll insert multiple copies as separate entries with unique keys (append suffix)
+  const inserts = [
+    {pos:4, obj:{ key: SPECIAL_MANTRA + " [1]", display: SPECIAL_MANTRA, mantra: SPECIAL_MANTRA, avatar: mkAvatar(SPECIAL_MANTRA)}},
+    {pos:11, obj:{ key: SPECIAL_MANTRA + " [2]", display: SPECIAL_MANTRA, mantra: SPECIAL_MANTRA, avatar: mkAvatar(SPECIAL_MANTRA)}},
+    {pos:21, obj:{ key: SPECIAL_MANTRA + " [3]", display: SPECIAL_MANTRA, mantra: SPECIAL_MANTRA, avatar: mkAvatar(SPECIAL_MANTRA)}},
+    {pos:arr.length, obj:{ key: SPECIAL_MANTRA + " [4]", display: SPECIAL_MANTRA, mantra: SPECIAL_MANTRA, avatar: mkAvatar(SPECIAL_MANTRA)}}
+  ];
+  // sort descending so insert positions remain valid
+  inserts.sort((a,b)=>b.pos-a.pos).forEach(ins=> arr.splice(ins.pos,0, ins.obj));
+  return arr;
+})();
+
+/* =========================
+   State / localStorage initialization
+   =========================*/
+const STORAGE_KEY = 'bhakti_jap_final_v1';
+let state = loadState();
+let selected = state.order && state.order.length ? state.order[0] : DEFAULT[0].key;
+
+/* load / save */
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      const items = {}; const order = [];
+      for(const d of DEFAULT){ items[d.key] = {count:0,display:d.display,mantra:d.mantra,avatar:d.avatar}; order.push(d.key); }
+      const s = {items,order};
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+      return s;
+    }
+    // if exists, ensure any new DEFAULT entries are merged (so added mantras show up)
+    const parsed = JSON.parse(raw);
+    // merge missing defaults
+    for(const d of DEFAULT){
+      if(!parsed.items[d.key]){
+        parsed.items[d.key] = {count:0,display:d.display,mantra:d.mantra,avatar:d.avatar};
+        parsed.order.push(d.key);
+      } else {
+        // ensure display/mantra/avatar are present (do not overwrite count)
+        parsed.items[d.key].display = parsed.items[d.key].display || d.display;
+        parsed.items[d.key].mantra = parsed.items[d.key].mantra || d.mantra;
+        parsed.items[d.key].avatar = parsed.items[d.key].avatar || d.avatar;
+      }
+    }
+    return parsed;
+  }catch(e){
+    console.error(e);
+    const items = {}; const order=[];
+    for(const d of DEFAULT){ items[d.key] = {count:0,display:d.display,mantra:d.mantra,avatar:d.avatar}; order.push(d.key); }
+    return {items,order};
+  }
+}
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); window.dispatchEvent(new Event('storage-sync')); }
+
+/* =========================
+   Elements
+   =========================*/
+const listEl = document.getElementById('list');
+const bigName = document.getElementById('bigName');
+const devImg = document.getElementById('devImg');
+const countEl = document.getElementById('count');
+const mantraTitle = document.getElementById('mantraTitle');
+const mantraText = document.getElementById('mantraText');
+const japBtn = document.getElementById('japBtn');
+const stageLeft = document.getElementById('stageLeft');
+
+const musicOnChk = document.getElementById('musicOn');
+const autoLoopChk = document.getElementById('autoLoop');
+const stopAllBtn = document.getElementById('stopAll');
+
+const addNameInput = document.getElementById('addName');
+const addBtn = document.getElementById('addBtn');
+const removeBtn = document.getElementById('removeBtn');
+
+const plus10 = document.getElementById('plus10');
+const plus108 = document.getElementById('plus108');
+const resetItem = document.getElementById('resetItem');
+
+/* =========================
+   Render list & selection
+   =========================*/
+function renderList(){
+  listEl.innerHTML = '';
+  for(const key of state.order){
+    const meta = state.items[key];
+    if(!meta) continue;
+    const it = document.createElement('div');
+    it.className = 'item' + (key===selected ? ' active':'');
+    it.onclick = ()=>{ selectKey(key); };
+    const avatar = document.createElement('div'); avatar.className='avatar'; avatar.innerHTML = `<div style="font-weight:900">${meta.avatar||key.charAt(0)}</div>`;
+    const metaDiv = document.createElement('div'); metaDiv.className='meta';
+    // Display both: name + mantra (option C requested earlier) — but request later asked key==display==mantra; to satisfy both, show first line the mantra (display) and second line smaller shows same or short label
+    metaDiv.innerHTML = `<div class="name">${meta.display||key}</div><div class="mantra">${(meta.mantra||'').slice(0,60)}</div>`;
+    it.appendChild(avatar); it.appendChild(metaDiv);
+    listEl.appendChild(it);
+  }
+}
+
+function selectKey(key){
+  // stop current mantra immediately
+  stopChant();
+  stopAmbient();
+  selected = key;
+  // start ambient for selected if musicOn
+  if(musicOnChk.checked) startAmbientFor(selected);
+  renderSelected();
+  renderList();
+}
+
+/* =========================
+   Render selected info
+   =========================*/
+function renderSelected(){
+  if(!state.items[selected]){
+    selected = state.order.length ? state.order[0] : null;
+    if(!selected) return;
+  }
+  const m = state.items[selected];
+  bigName.textContent = m.display || selected;
+  devImg.textContent = m.avatar || (m.display||selected).charAt(0);
+  countEl.textContent = m.count || 0;
+  mantraTitle.textContent = m.display || selected;
+  mantraText.textContent = m.mantra || '';
+}
+
+/* =========================
+   Fly animation
+   =========================*/
+function spawnFly(text){
+  const el = document.createElement('div');
+  el.className = 'fly';
+  el.textContent = text;
+  const rect = stageLeft.getBoundingClientRect();
+  const startX = rect.left + 20 + Math.random()*(rect.width-40);
+  const startY = rect.bottom - 80 + (Math.random()*40-20);
+  el.style.left = startX + 'px';
+  el.style.top = startY + 'px';
+  el.style.fontSize = (16 + Math.random()*14) + 'px';
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 1000);
+}
+
+/* =========================
+   Speech (TTS) chanting logic
+   - play once per click (unless autoLoop checked)
+   - stop previous utterance when new click
+   =========================*/
+let chantPlaying = false;
+let chantInterval = null;
+
+function chooseVoicePreference(){
+  const voices = window.speechSynthesis.getVoices() || [];
+  const prefer = ['hi-IN','hi','Hindi','Aditi','Kumar','Google हिन्दी','Google Hindi','Lekha','Vidhya'];
+  for(const p of prefer){
+    const v = voices.find(vo=> (vo.lang && vo.lang.toLowerCase().includes(String(p).toLowerCase())) || (vo.name && vo.name.toLowerCase().includes(String(p).toLowerCase())));
+    if(v) return v;
+  }
+  return voices.find(v=>/en/.test(v.lang)) || voices[0] || null;
+}
+
+function speakOnce(text){
+  if(!('speechSynthesis' in window)) return console.warn('TTS not supported');
+  stopChant();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'hi-IN';
+  u.rate = 0.98;
+  u.pitch = 0.98;
+  const v = chooseVoicePreference();
+  if(v) u.voice = v;
+  window.speechSynthesis.speak(u);
+  chantPlaying = true;
+  u.onend = ()=> { chantPlaying = false; };
+}
+
+function startChantLoop(text){
+  stopChant();
+  chantPlaying = true;
+  speakOnce(text);
+  const approxDur = Math.max(900, text.length * 80);
+  chantInterval = setInterval(()=> speakOnce(text), approxDur + 250);
+}
+
+function stopChant(){
+  chantPlaying = false;
+  if(chantInterval){ clearInterval(chantInterval); chantInterval = null; }
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+}
+
+/* =========================
+   Ambient per-deity via WebAudio
+   =========================*/
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let bgNodes = null;
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new AudioCtx();
+}
+const AMBIENT_MAP = {};
+// give each mantra a gentle ambient freq based on index (fallback)
+DEFAULT.forEach((d,i)=> AMBIENT_MAP[d.key]=120 + (i%10)*12);
+
+function startAmbientFor(key){
+  stopAmbient();
+  if(!musicOnChk.checked) return;
+  ensureAudio();
+  const freq = AMBIENT_MAP[key] || 180;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  filter.type = 'lowpass'; filter.frequency.value = 1200;
+  gain.gain.value = 0.0011;
+  const lfo = audioCtx.createOscillator();
+  const lfoGain = audioCtx.createGain();
+  lfo.frequency.value = 0.04 + Math.random()*0.06;
+  lfoGain.gain.value = 6;
+  lfo.connect(lfoGain);
+  lfoGain.connect(osc.frequency);
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+  try{ osc.start(); lfo.start(); }catch(e){}
+  bgNodes = {osc,lfo,gain,filter};
+}
+
+function stopAmbient(){
+  if(!bgNodes) return;
+  try{
+    bgNodes.osc.stop(); bgNodes.osc.disconnect();
+    bgNodes.lfo.stop(); bgNodes.lfo.disconnect();
+    bgNodes.gain.disconnect(); bgNodes.filter.disconnect();
+  }catch(e){}
+  bgNodes = null;
+}
+
+/* =========================
+   JAP action & single-mantra click
+   =========================*/
+function jap(times=1){
+  if(!selected) return;
+  stopChant();
+  for(let i=0;i<times;i++){
+    state.items[selected].count = (state.items[selected].count||0) + 1;
+    spawnFly(state.items[selected].display || selected);
+  }
+  saveState();
+  renderSelected();
+  const mantra = state.items[selected].mantra || state.items[selected].display || selected;
+  if(autoLoopChk.checked){
+    startChantLoop(mantra);
+  } else {
+    speakOnce(mantra);
+  }
+  if(musicOnChk.checked) startAmbientFor(selected);
+}
+
+/* single click on list item should chant that mantra once */
+function chantListItem(key){
+  if(!state.items[key]) return;
+  // set as selected & then jap once
+  selectKey(key);
+  jap(1);
+}
+
+/* =========================
+   Radha 28 sequential play (requirement)
+   - plays 28 names one-by-one using TTS (each name counts as 1)
+   - stops if Stop All pressed
+   =========================*/
+const radhaNames = [
+"राधा","राधिका","वृषभानुजा","वृषभानुनंदिनी","वृषभानुकिशोरी","श्रीजी",
+"ललिता-सखी","स्वामिनी","जयश्री","कृष्णप्रिया","गोपीकिशोरी","करुणामयी",
+"मधुरिमा","श्रीकिशोरी","अनंगमोहीनी","हरिप्रिया","श्रीजी मूर्ति","श्रीराधा ठाकुरानी",
+"गोलोकसुन्दरी","वृन्दावनी","रासेश्वरी","भक्तवत्सला","बालरूपा","गुणगौरवा",
+"मधुराधीश्वरी","प्रियाजी","गोविन्दवल्लभा","किशोरी जीव"
+];
+
+let radhaPlaying = false;
+async function playRadhaList(){
+  stopAllNow();
+  radhaPlaying = true;
+  for(let i=0;i<radhaNames.length;i++){
+    if(!radhaPlaying) break;
+    const name = radhaNames[i];
+    // increment a generic counter per name (we will track under a special key)
+    const key = 'Radha:' + name;
+    if(!state.items[key]){ state.items[key] = {count:0, display: name, mantra: name, avatar: mkAvatar(name)}; state.order.unshift(key); }
+    state.items[key].count = (state.items[key].count||0) + 1;
+    saveState();
+    renderList(); renderSelected();
+    spawnFly(name);
+    // speak and await
+    await new Promise(res=>{
+      const u = new SpeechSynthesisUtterance(name);
+      const v = chooseVoicePreference();
+      if(v) u.voice = v;
+      u.lang = 'hi-IN'; u.rate = 0.95; u.pitch = 1.02;
+      u.onend = ()=> res();
+      window.speechSynthesis.speak(u);
+    });
+    // small delay between names
+    await new Promise(r=>setTimeout(r, 180));
+  }
+  radhaPlaying = false;
+}
+
+/* =========================
+   UI wiring
+   =========================*/
+function renderAll(){ renderList(); renderSelected(); }
+renderAll();
+
+/* wire list clicks to chant specific mantra */
+listEl.addEventListener('click', (ev)=>{
+  let node = ev.target;
+  while(node && !node.classList.contains('item')) node = node.parentElement;
+  if(node){
+    // find display text
+    const name = node.querySelector('.name')?.textContent || node.textContent;
+    // find the matching key in state.order (first match)
+    for(const k of state.order){
+      if(state.items[k] && (state.items[k].display === name || k === name)){
+        chantListItem(k);
+        break;
+      }
+    }
+  }
+});
+
+/* big jap and other controls */
+japBtn.addEventListener('click', ()=> jap(1));
+bigName.addEventListener('click', ()=> jap(1));
+window.addEventListener('keydown', (e)=>{ if(e.code==='Space' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){ e.preventDefault(); jap(1); } });
+
+plus10.addEventListener('click', ()=> jap(10));
+plus108.addEventListener('click', ()=> jap(108));
+
+resetItem.addEventListener('click', ()=>{ if(!selected) return; if(confirm(`Reset ${selected} ka count?`)){ state.items[selected].count = 0; saveState(); renderSelected(); }});
+
+stopAllBtn.addEventListener('click', ()=> { stopChant(); stopAmbient(); radhaPlaying=false; });
+
+addBtn.addEventListener('click', ()=>{ const v = (addNameInput.value||'').trim(); if(!v) return alert('Naam daalein'); let name = v, mantra = v, avatar = v.charAt(0); if(v.includes('|')){ const parts = v.split('|'); name = parts[0].trim(); mantra = parts[1].trim(); } if(state.items[name]) return alert('Pehele se maujood hai'); state.items[name] = {count:0,display:name,mantra:mantra,avatar:avatar}; state.order.unshift(name); selected = name; saveState(); renderList(); renderSelected(); addNameInput.value=''; });
+
+removeBtn.addEventListener('click', ()=>{ if(!selected) return; if(!confirm(`Remove ${selected} from list?`)) return; delete state.items[selected]; state.order = state.order.filter(x=>x!==selected); selected = state.order[0] || null; saveState(); renderList(); renderSelected(); });
+
+musicOnChk.addEventListener('change', ()=>{ if(musicOnChk.checked) startAmbientFor(selected); else stopAmbient(); });
+autoLoopChk.addEventListener('change', ()=> { if(!autoLoopChk.checked) stopChant(); });
+
+/* storage sync */
+window.addEventListener('storage', (ev)=>{ if(ev.key===STORAGE_KEY){ try{ state = JSON.parse(ev.newValue); renderList(); renderSelected(); }catch(e){} }});
+window.addEventListener('storage-sync', ()=>{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) state = JSON.parse(raw); renderList(); renderSelected(); });
+
+/* ensure voices loaded */
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = ()=>{/* noop */};
+
+/* safety save */
+window.addEventListener('beforeunload', ()=> saveState());
+
+/* helper stop all */
+function stopAllNow(){ stopChant(); stopAmbient(); radhaPlaying = false; }
+
+/* drawer toggle */
+const wrap = document.getElementById('wrap');
+const drawerToggle = document.getElementById('drawerToggle');
+drawerToggle.addEventListener('click', ()=>{
+  if(wrap.classList.contains('sidebar-closed')) wrap.classList.remove('sidebar-closed');
+  else wrap.classList.add('sidebar-closed');
+});
+
+/* initial state: ensure sidebar is open on desktop, closed on small screens */
+if(window.innerWidth < 900) wrap.classList.add('sidebar-closed');
+
+/* ensure initial ambient if enabled */
+if(musicOnChk.checked) startAmbientFor(selected);
+
+/* expose chantListItem to be used if needed externally */
+window.chantListItem = chantListItem;
+</script>
+</body>
+</html>
